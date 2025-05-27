@@ -1,5 +1,4 @@
 'use strict';
-require('dotenv').config();
 const Readline = require('readline');
 const matcher = require('./matcher');
 const weather = require('./weather');

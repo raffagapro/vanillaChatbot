@@ -3,7 +3,7 @@ Simple CLI weather chatbot
 
 Installation
 1. Run npm i
-2. Create a .env with the following variables
- - WEATHER_API_KEY
- - MAPS_API_BASE_URL
- - WEATHER_API_BASE_URL
+2. Fill and rename the .env 
+ 3. Install and Create an account for Ngrok
+ - choco install ngrok (if chocolatey is install)
+ - run ngrok http 3000 (or whatever port you are using)
