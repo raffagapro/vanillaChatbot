@@ -3,6 +3,7 @@ require('dotenv').config();
 const Readline = require('readline');
 const matcher = require('./matcher');
 const weather = require('./weather');
+const { currentWeather } = require('./parser');
 
 
 const rl = Readline.createInterface({
@@ -24,7 +25,7 @@ rl.on('line', replay =>{
             case 'CurrentWeather':
                 console.log(`Checking weather for ${data.entities.city}`);
                 weather(data.entities.city)
-                    .then(res => console.log(`The Weather is ${res.condition}. The temperature is ${res.temperature.degrees} ${res.temperature.unit}`))
+                    .then(res => console.log(currentWeather(res)))
                     .catch(err => console.error(`Error fetching weather: ${err.message}`));
                 rl.prompt();
                 break;
