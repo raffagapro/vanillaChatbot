@@ -1,6 +1,14 @@
 'use exact';
 const axios = require('axios');
 
+const formatData = data =>{
+    return{
+        location: data.location,
+        condition: data.weatherCondition.description.text,
+        temperature: data.temperature,
+    }
+}
+
 const getWeather = location => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -16,13 +24,14 @@ const getWeather = location => {
                 //NEED OPTIMIZATION FOR WHEN THERE IS MORE THAN 1 RESULT
                 return {
                     latitude: res.data.results[0].geometry.location.lat,
-                    longitude: res.data.results[0].geometry.location.lng
+                    longitude: res.data.results[0].geometry.location.lng,
+                    location:location
                 }
             })
             const weatherConditions = await axios.get(
                 `https://weather.googleapis.com/v1/currentConditions:lookup?key=${process.env.WEATHER_API_KEY}&location.latitude=${location.latitude}&location.longitude=${location.longitude}`
             );
-            resolve(weatherConditions.data);
+            resolve(formatData(weatherConditions.data));
         } catch (error) {
             reject(error);
         }
