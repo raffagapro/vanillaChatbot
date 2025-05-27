@@ -13,6 +13,7 @@
   "author": "Chris Luna",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.9.0",
     "xregexp": "3.1.1"
   }
 }
