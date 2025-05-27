@@ -1,0 +1,41 @@
+'use strict';
+const Readline = require('readline');
+const matcher = require('./matcher');
+const weather = require('./weather');
+
+const rl = Readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  terminal: false
+});
+
+rl.setPrompt('> ');
+rl.prompt();
+rl.on('line', replay =>{
+    matcher(replay, data =>{
+        switch (data.intent) {
+            case 'Hello':
+                console.log(`${data.entities.greeting} to you too!`);
+                rl.prompt();
+                break;
+
+            case 'CurrentWeather':
+                console.log(`Checking weather for ${data.entities.city}`);
+                weather(data.entities.city)
+                    .then(res => console.log(`The response is ${res}`))
+                    .catch(err => console.error(`Error fetching weather: ${err.message}`));
+                rl.prompt();
+                break;
+
+            case 'Exit':
+                console.log("Goodbye from Vanilla!");
+                process.exit(0);
+                break;
+        
+            default:
+                console.log("Sorry, I don't understand that.");
+                rl.prompt();
+                break;
+        }
+    });
+})

@@ -1,0 +1,18 @@
+{
+  "name": "vanilla",
+  "version": "1.0.0",
+  "description": "A simple CL weather chatbot!",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon app.js",
+    "test": "test.js"
+  },
+  "keywords": [
+    "chatbot"
+  ],
+  "author": "Chris Luna",
+  "license": "ISC",
+  "dependencies": {
+    "xregexp": "3.1.1"
+  }
+}
