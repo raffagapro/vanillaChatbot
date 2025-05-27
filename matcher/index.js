@@ -2,17 +2,17 @@
 const patterns = require('../patterns');
 const XregExp = require('xregexp');
 
-let createEntities = (str, patter) =>{
-    return XregExp.exec(str, XregExp(patter, 'i'));
+let createEntities = (str, pattern) =>{
+    return XregExp.exec(str, XregExp(pattern, 'i'));
 }
 
 let matcherPattern = (str, cb) =>{
     let getResult = patterns.find(item => {
-        if(XregExp.test(str, XregExp(item.pattern, 'i'))) {
+        if(XregExp.test(str, XregExp(item.pattern, 'i'))) {            
             return true;
         }
     });
-
+    
     if (getResult) {
         return cb({
             intent: getResult.intent,

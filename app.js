@@ -18,13 +18,13 @@ rl.on('line', replay =>{
     matcher(replay, data =>{
         switch (data.intent) {
             case 'Hello':
-                console.log(`${data.entities.greeting} to you too!`);
+                console.log(`${data.entities.groups.greeting} to you too!`);
                 rl.prompt();
                 break;
 
             case 'CurrentWeather':
-                console.log(`Checking weather for ${data.entities.city}`);
-                weather(data.entities.city)
+                console.log(`Checking weather for ${data.entities.groups.city}`);
+                weather(data.entities.groups.city)
                     .then(res => console.log(currentWeather(res)))
                     .catch(err => console.error(`Error fetching weather: ${err.message}`));
                 rl.prompt();
