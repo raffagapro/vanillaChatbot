@@ -1,0 +1,26 @@
+{
+  "oslo": {
+    "latitude": 59.9138688,
+    "longitude": 10.7522454
+  },
+  "chicago": {
+    "latitude": 41.8781136,
+    "longitude": -87.6297982
+  },
+  "tokyo": {
+    "latitude": 35.6764225,
+    "longitude": 139.650027
+  },
+  "beijing": {
+    "latitude": 39.904211,
+    "longitude": 116.407395
+  },
+  "cancun": {
+    "latitude": 21.161908,
+    "longitude": -86.8515279
+  },
+  "seattle": {
+    "latitude": 47.6061389,
+    "longitude": -122.3328481
+  }
+}
