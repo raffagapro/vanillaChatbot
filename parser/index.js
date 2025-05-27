@@ -29,19 +29,26 @@ const getDate = day =>{
 };
 
 const forecastWeather = (res, data) =>{
-    console.log('res', res);   
-    let parseDate = getDate(data.time);
-    const { city:location } = data
-    console.log(location);
+    let [year, month, day] = getDate(data.time).split("-").map(Number);
     
-    // working here
-    const { condition, temperature } = res.filter(i => i.date === parseDate)[0];
+    const { city:location, weather, time } = data;
+    const foundResult = res.forecastDays.find(
+        i => i.displayDate.year === year &&
+        i.displayDate.month === month &&
+        i.displayDate.day === day
+    );
+
+    console.log('foundResult', foundResult.daytimeForecast);
     let regEx = new RegExp(data.weather, 'i');
+    const condition  = foundResult.daytimeForecast.weatherCondition.description.text
     let testCondition = regEx.test(condition);
-    return `${testCondition ? 'Yes, there will' : 'No, there will not'} be ${condition} ${data.time} in ${location}`
+    // Need to work on a prefix for the weather condition
+    return `${testCondition ? 'Yes, there will' : 'No, there will not'} be ${weather} ${time} in ${location}. But there will be ${condition}!`
 }
 
 module.exports = {
     currentWeather,
     forecastWeather
 };
+
+//Will it rain in cancun tomorrow?
