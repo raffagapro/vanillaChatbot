@@ -56,7 +56,23 @@ class FBeamer{
         }
     };
 
-    IncomingMessage(req, res, cb) {
+    // subscribe() {
+    //         request({
+    //             uri: 'https://graph.facebook.com/v2.8/me/subscribed_apps',
+    //             qs: {
+    //                 access_token: this.PAGE_ACCESS_TOKEN
+    //             },
+    //             method: 'POST'
+    //         }, (error, response, body) => {
+    //             if(!error && JSON.parse(body).success) {
+    //                 console.log("Subscribed to the page!");
+    //             } else {
+    //                 console.log(error);
+    //             }
+    //         });
+    // }
+
+    incomingMessage(req, res, cb) {
         res.sendStatus(200);
         if (req.body.object === 'page' && req.body.entry) {
             let data = req.body;
@@ -81,7 +97,7 @@ class FBeamer{
         if (message.text) return{
             sender,
             type: 'text',
-            content: message.text
+            message
         }
     };
 
