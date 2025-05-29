@@ -1,5 +1,5 @@
 'use strict'
-const colors = require('colors');
+// const colors = require('colors');
 const moment = require('moment');
 
 const getFeel = temp =>{
@@ -13,7 +13,7 @@ const getFeel = temp =>{
 
 const currentWeather = res =>{
     const { location , condition, temperature } = res
-    return `The Weather is ${condition.green}. The temperature is ${String(temperature.degrees).red} ${temperature.unit.red}. ${getFeel(temperature.degrees)} `
+    return `The weather is ${condition}. The temperature is ${String(temperature.degrees)} degress ${temperature.unit.toLowerCase()}. ${getFeel(temperature.degrees)} `
 }
 
 const getDate = day =>{
@@ -50,5 +50,3 @@ module.exports = {
     currentWeather,
     forecastWeather
 };
-
-//Will it rain in cancun tomorrow?

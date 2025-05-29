@@ -1,5 +1,7 @@
 'use strict';
 const crypto = require('crypto');
+const request = require('request');
+const FB_API_VERSION = 'v22.0';
 
 class FBeamer{
     constructor(fbPageAccessToken, verifyToken, fbSecret){
@@ -14,7 +16,7 @@ class FBeamer{
         } catch (e) {
             console.log(`Error initializing FBeamer: ${e.message}`);
         }
-    }
+    };
 
     registerHook(req, res) {
         const params = req.query;
@@ -33,7 +35,7 @@ class FBeamer{
         } catch (e) {
             console.log(`Error in registerHook: ${e.message}`);
         }
-    }
+    };
 
     verifySignature(req, res, buf) {
         return (req, res, buf)=>{
@@ -53,24 +55,72 @@ class FBeamer{
             }
         }
     };
-    IncomingMessage(req, res) {
+
+    IncomingMessage(req, res, cb) {
         res.sendStatus(200);
         if (req.body.object === 'page' && req.body.entry) {
             let data = req.body;
             data.entry.forEach(pageObj =>{
                 if (pageObj.messaging) {
                     pageObj.messaging.forEach(messageObj =>{
-                        console.log(messageObj);
                         if (messageObj.postback) {
                             //hanlde postback
                         } else {
-                            // handle message
+                            return cb(this.messageHandler(messageObj));
                         }
                     });
                 }
             }); 
         }
-    }
+    };
+
+    messageHandler(obj){
+        let sender = obj.sender.id;
+        let message = obj.message
+
+        if (message.text) return{
+            sender,
+            type: 'text',
+            content: message.text
+        }
+    };
+
+    sendMessage(payload){
+        return new Promise((resolve, reject) => {
+            request({
+                uri:`https://graph.facebook.com/${FB_API_VERSION}/me/messages`,
+                qs: { access_token: this.fbPageAccessToken },
+                method: 'POST',
+                json: payload
+            }, (err, res, body) => {
+                if (!err && res.statusCode === 200) resolve({ mid: body.message_id });
+                else reject(err);            
+            });
+        });
+    };
+
+    txt(id, text, messaging_type = 'RESPONSE') {
+        let payload = {
+            messaging_type,
+            recipient: { id },
+            message: { text },
+        };
+        return this.sendMessage(payload);
+    };
+
+    img(id, url, messaging_type = 'RESPONSE'){
+        let payload = {
+            messaging_type,
+            recipient: { id },
+            message: {
+                attachment: {
+                    type: 'image',
+                    payload: { url}
+                }
+            },
+        };
+        return this.sendMessage(payload);
+    };
 };
 
 module.exports = FBeamer;

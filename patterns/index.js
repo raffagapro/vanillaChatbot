@@ -1,7 +1,11 @@
 const patternDict = [
     {
-        pattern: '\\b(?<greeting>Hi|Hello|Hey)\\b',
+        pattern: '\\b(?<greeting>hi|hello|hey)\\b(?!\\s+there!?\\b)',
         intent: 'Hello' 
+    },
+    {
+        pattern: '\\bHello There!?\\b',
+        intent: 'EasterEgg' 
     },
     {
         pattern: '\\b(bye|exit)\\b',

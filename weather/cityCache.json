@@ -22,5 +22,13 @@
   "seattle": {
     "latitude": 47.6061389,
     "longitude": -122.3328481
+  },
+  "new york": {
+    "latitude": 40.7127753,
+    "longitude": -74.0059728
+  },
+  "los mochis": {
+    "latitude": 25.7904657,
+    "longitude": -108.985882
   }
 }

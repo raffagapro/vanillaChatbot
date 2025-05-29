@@ -12,7 +12,6 @@ let matcherPattern = (str, cb) =>{
             return true;
         }
     });
-    
     if (getResult) {
         return cb({
             intent: getResult.intent,
