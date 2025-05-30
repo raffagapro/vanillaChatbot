@@ -72,6 +72,25 @@ class FBeamer{
     //         });
     // }
 
+    subscribeNLP(){
+        request({
+            uri: `https://graph.facebook.com/${FB_API_VERSION}/me/nlp_configs`,
+            qs: { 
+                nlp_enabled: true,
+                model: 'SPANISH',
+                access_token: this.fbPageAccessToken,
+                custom_token: 'YVBP4ZF5HHD3SOH3RMITBMEJQSB3B74A'
+            },
+            method: 'POST'
+        }, (err, res, body) => {
+            if (!err && JSON.parse(body).success) {
+                console.log("Subscribed to the page!");
+            } else {
+                console.log(err);
+            }
+        });
+    }
+
     incomingMessage(req, res, cb) {
         res.sendStatus(200);
         if (req.body.object === 'page' && req.body.entry) {

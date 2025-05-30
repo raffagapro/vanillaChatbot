@@ -26,6 +26,8 @@ server.post('/', (req, res, next)=>{
                 if (message.text) {
                     // If a text message is received, use f.txt or f.img to send text/image back.
                     f.txt(sender, `You just said ${message.text}`);
+                    console.log(message.nlp);
+                    
                 }
             }
         } catch (err) {
@@ -33,7 +35,7 @@ server.post('/', (req, res, next)=>{
         }
     });
 });
-
+f.subscribeNLP()
 // f.subscribe();
 
 server.listen(PORT, () => console.log(`Chatbot running on port:${PORT}`));
