@@ -1,5 +1,6 @@
 'use strict';
 const axios = require('axios');
+const { normalizePhoneNumber } = require('../utils/phoneUtils');
 
 class WABeamer{
     constructor(vToken){
@@ -29,22 +30,20 @@ class WABeamer{
 
     receivedMessage = (req, res) => {    
         try {
-            console.log(req.body.entry[0].changes[0].value.messages[0]);
-            const recivedMessage = req.body.entry[0].changes[0].value.messages[0]
-            if (recivedMessage) this.senderNumber = recivedMessage.from;
-            res.send(`Message received!`);
-            this.txt(`You just said: ${recivedMessage.text.body}`);
+            const value = req.body?.entry?.[0]?.changes?.[0]?.value;
+            const recivedMessage = value?.messages?.[0];
+            if (recivedMessage) {
+                this.senderNumber = normalizePhoneNumber(recivedMessage.from);
+                this.txt(`You just said: ${recivedMessage.text.body}`);
+            }
+            res.status(200).send(`Message received!`);
         } catch (err) {
             console.log(`Error in receivedMessage: ${err.message}`);
-            res.status(400).send();
+            res.status(200).send();
         }   
     };
 
     sendMessage = async (body) => {
-        console.log(process.env.WA_API_VER);
-        console.log(this.senderNumber);
-        console.log(process.env.WA_TOKEN);
-        
         try {
             const response = await axios.post(
                 `https://graph.facebook.com/${process.env.WA_API_VER}/${process.env.WA_BOT_NUMBER}/messages`,
@@ -58,13 +57,12 @@ class WABeamer{
             );
             return response.data;
         } catch (err) {
-            console.log(`Error sending message: ${err.message}`);
+            console.error('Error status:', err.response.status);
+            console.error('Error data:', JSON.stringify(err.response.data, null, 2));
         }
     };
 
     txt(message){
-        console.log(message);
-        
         if (this.senderNumber && message) {
             return this.sendMessage({
                 messaging_product: 'whatsapp',
