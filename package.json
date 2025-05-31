@@ -4,7 +4,7 @@
   "description": "A simple CL weather chatbot!",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js",
+    "start": "nodemon src/server.js",
     "test": "test.js"
   },
   "keywords": [

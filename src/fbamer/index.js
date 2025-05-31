@@ -1,7 +1,6 @@
 'use strict';
 const crypto = require('crypto');
 const request = require('request');
-const FB_API_VERSION = 'v22.0';
 
 class FBeamer{
     constructor(fbPageAccessToken, verifyToken, fbSecret){
@@ -74,7 +73,7 @@ class FBeamer{
 
     subscribeNLP(){
         request({
-            uri: `https://graph.facebook.com/${FB_API_VERSION}/me/nlp_configs`,
+            uri: `https://graph.facebook.com/${process.env.FB_API_VERSION}/me/nlp_configs`,
             qs: { 
                 nlp_enabled: true,
                 model: 'SPANISH',

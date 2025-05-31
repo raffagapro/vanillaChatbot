@@ -1,23 +1,17 @@
-'use strict';
-require('dotenv').config();
-const express = require('express');
 const bodyParser = require('body-parser');
-const FBeamer = require('./fbamer');
-
-const server = express();
-const PORT = process.env.PORT || 3000;
+const FBeamer = require('../fbamer');
 const f = new FBeamer(process.env.FB_PAGE_ACCESS_TOKEN, process.env.VERIFY_TOKEN, process.env.FB_SECRET);
 
-server.get('/', (req, res, next) => {
+const registerHook = (req, res, next) => {
     f.registerHook(req, res)
     return next();
-});
+}
 
-server.post('/', bodyParser.json({
+const verifySignature = bodyParser.json({
     verify: f.verifySignature.call(f)
-}));
+})
 
-server.post('/', (req, res, next)=>{
+const incomingMessage = (req, res, next)=>{
     return f.incomingMessage(req, res, async data => {
         try {
             if (data.type === 'text'){
@@ -34,8 +28,10 @@ server.post('/', (req, res, next)=>{
             console.log(`Error processing incoming message: ${err.message}`);
         }
     });
-});
-f.subscribeNLP()
-// f.subscribe();
+}
 
-server.listen(PORT, () => console.log(`Chatbot running on port:${PORT}`));
+module.exports = {
+    registerHook,
+    verifySignature,
+    incomingMessage
+};
