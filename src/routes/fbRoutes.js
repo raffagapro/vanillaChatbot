@@ -1,15 +1,18 @@
+const bodyParser = require('body-parser');
 const express = require('express');
 const router = express.Router();
-const {
-    registerHook,
-    verifySignature,
-    incomingMessage
-} = require('../controllers/fbController');
+const fbController = require('../controllers/fbController');
 
-router.get('/', registerHook);
+const fb = new fbController({
+    fbPageAccessToken: process.env.FB_PAGE_ACCESS_TOKEN,
+    verifyToken: process.env.VERIFY_TOKEN,
+    fbSecret: process.env.FB_SECRET
+});
 
-router.post('/', verifySignature);
+router.get('/', fb.registerHook);
 
-router.post('/', incomingMessage);
+router.use(bodyParser.json({verify: fb.verifySignature}));
+
+router.post('/', fb.receivedMessage);
 
 module.exports = router;

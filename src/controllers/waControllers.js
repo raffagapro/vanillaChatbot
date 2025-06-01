@@ -3,7 +3,7 @@ const axios = require('axios');
 const { normalizePhoneNumber } = require('../utils/phoneUtils');
 
 class WABeamer{
-    constructor(vToken){
+    constructor({vToken}){
         try {
             if (vToken) {
                 this.vToken = vToken;
@@ -43,11 +43,11 @@ class WABeamer{
         }   
     };
 
-    sendMessage = async (body) => {
+    sendMessage = async (payload) => {
         try {
             const response = await axios.post(
                 `https://graph.facebook.com/${process.env.WA_API_VER}/${process.env.WA_BOT_NUMBER}/messages`,
-                body,
+                payload,
                 {
                     headers: {
                         'Content-Type': 'application/json',
