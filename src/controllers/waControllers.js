@@ -1,6 +1,7 @@
 'use strict';
 const axios = require('axios');
 const { normalizePhoneNumber } = require('../utils/phoneUtils');
+const witService = require('../services/movies');
 
 class WABeamer{
     constructor({vToken}){
@@ -28,13 +29,14 @@ class WABeamer{
         }
     };
 
-    receivedMessage = (req, res) => {    
+    receivedMessage = async (req, res) => {    
         try {
             const value = req.body?.entry?.[0]?.changes?.[0]?.value;
             const recivedMessage = value?.messages?.[0];
             if (recivedMessage) {
                 this.senderNumber = normalizePhoneNumber(recivedMessage.from);
-                this.txt(`You just said: ${recivedMessage.text.body}`);
+                const response = await witService.processMessage(recivedMessage.text.body);
+                this.txt(response.reply);
             }
             res.status(200).send(`Message received!`);
         } catch (err) {
