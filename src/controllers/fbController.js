@@ -1,9 +1,11 @@
 'use strict';
 const crypto = require('crypto');
 const axios = require('axios');
+const Beamer = require('../models/Beamer');
 
-class FBeamer {
-    constructor({fbPageAccessToken, verifyToken, fbSecret}) {        
+class FBeamer extends Beamer {
+    constructor({fbPageAccessToken, verifyToken, fbSecret, botService}) {    
+        super(botService);    
         try {
             if (fbPageAccessToken && verifyToken && fbSecret) {
                 this.fbPageAccessToken = fbPageAccessToken;
@@ -15,9 +17,8 @@ class FBeamer {
         } catch (e) {
             console.log(`Error initializing FBeamer: ${e.message}`);
         }
+        this.messageObject = null;
     }
-
-    messageObject;
 
     registerHook = (req, res, next) => {
         const params = req.query;
@@ -61,7 +62,7 @@ class FBeamer {
                 let data = req.body;
                 data.entry.forEach(pageObj =>{
                     if (pageObj.messaging) {
-                        pageObj.messaging.forEach(messageObj =>{
+                        pageObj.messaging.forEach(async messageObj =>{
                             if (messageObj.postback) {
                                 //hanlde postback
                             } else if (messageObj.message && !messageObj.message?.is_echo) {
@@ -73,7 +74,8 @@ class FBeamer {
                                     this.messageObject.message &&
                                     this.messageObject.message.text
                                 ) {
-                                    this.txt(this.messageObject.sender, `You just said: ${this.messageObject.message.text}`);
+                                     const response = await this.botService.processMessage(this.messageObject.message.text);
+                                    this.txt(this.messageObject.sender, response.reply);
                                 }
                             }
                         });
@@ -87,32 +89,20 @@ class FBeamer {
         }
     };
 
-    sendMessage = async (payload) =>{
-        try {
-            const response = await axios.post(
-                `https://graph.facebook.com/${process.env.FB_API_VER}/me/messages`,
-                payload,
-                {
-                    params: { access_token: this.fbPageAccessToken },
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-            return response.data;
-        } catch (err) {
-            console.error('Error status:', err.response.status);
-            console.error('Error data:', JSON.stringify(err.response.data, null, 2));
-        }
-    };
-
     txt(id, text, messaging_type = 'RESPONSE') {
         let payload = {
             messaging_type,
             recipient: { id },
             message: { text },
         };
-        return this.sendMessage(payload);
+        return this.sendMessage(
+            `https://graph.facebook.com/${process.env.FB_API_VER}/me/messages`,
+            payload,
+            {
+                'Content-Type': 'application/json'
+            },
+            { access_token: this.fbPageAccessToken }
+        );
     };
 
     setMessageObj = (obj) =>{

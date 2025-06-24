@@ -1,19 +1,15 @@
 'use strict';
 const axios = require('axios');
+const Beamer = require('../models/Beamer');
 const { normalizePhoneNumber } = require('../utils/phoneUtils');
-const witService = require('../services/movies');
 
-class WABeamer{
-    constructor({vToken}){
-        try {
-            if (vToken) {
-                this.vToken = vToken;
-            } else throw new Error('WA Required Tokens are missing!');
-        } catch (err) {
-            console.log(`Error initializing WABeamer: ${err.message}`);
-        }
+class WABeamer extends Beamer {
+    constructor({vToken, botService}){
+        super(botService);
+        if (!vToken) throw new Error('WA Required Tokens are missing!');
+        this.vToken = vToken;
+        this.senderNumber = null; 
     };
-    senderNumber;
 
     verifyToken = (req, res) => {
         try {
@@ -35,7 +31,7 @@ class WABeamer{
             const recivedMessage = value?.messages?.[0];
             if (recivedMessage) {
                 this.senderNumber = normalizePhoneNumber(recivedMessage.from);
-                const response = await witService.processMessage(recivedMessage.text.body);
+                const response = await this.botService.processMessage(recivedMessage.text.body);
                 this.txt(response.reply);
             }
             res.status(200).send(`Message received!`);
@@ -45,37 +41,25 @@ class WABeamer{
         }   
     };
 
-    sendMessage = async (payload) => {
-        try {
-            const response = await axios.post(
-                `https://graph.facebook.com/${process.env.WA_API_VER}/${process.env.WA_BOT_NUMBER}/messages`,
-                payload,
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${process.env.WA_TOKEN}`
-                    }
-                }
-            );
-            return response.data;
-        } catch (err) {
-            console.error('Error status:', err.response.status);
-            console.error('Error data:', JSON.stringify(err.response.data, null, 2));
-        }
-    };
-
     txt(message){
         if (this.senderNumber && message) {
-            return this.sendMessage({
-                messaging_product: 'whatsapp',
-                recipient_type: "individual",
-                to: this.senderNumber,
-                type: 'text',
-                text: {
-                    preview_url: "false",
-                    body: message
+            return this.sendMessage(
+                 `https://graph.facebook.com/${process.env.WA_API_VER}/${process.env.WA_BOT_NUMBER}/messages`,
+                {
+                    messaging_product: 'whatsapp',
+                    recipient_type: "individual",
+                    to: this.senderNumber,
+                    type: 'text',
+                    text: {
+                        preview_url: "false",
+                        body: message
+                    }
+                },
+                {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${process.env.WA_TOKEN}`
                 }
-            });
+            );
         } else {
             throw new Error('senderNumber has not been set.');
         }

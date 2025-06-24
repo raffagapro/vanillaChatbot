@@ -1,16 +1,15 @@
 'use strict';
-const { Wit } = require('node-wit');
+const BotService = require('../models/BotService');
 
-const witClient = new Wit({
-    accessToken: process.env.WIT_AI_TOKEN,
-});
+class MovieBot extends BotService {
+    constructor(accessToken) {
+        super(accessToken);
+    }
 
-const witService = {
     async processMessage(message) {
         try {
-            const witResponse = await witClient.message(message, {});
+            const witResponse = await this.botClient.message(message, {});
             console.log('Wit.ai response:', JSON.stringify(witResponse, null, 2));
-            // Save the response if needed
             const result = {
                 intent: witResponse.intents?.[0]?.name || null,
                 entities: witResponse.entities || {},
@@ -18,7 +17,6 @@ const witService = {
                 witRaw: witResponse
             };
 
-            // Basic intent-based response
             let reply;
             switch (result.intent) {
                 case 'getDirector':
@@ -37,7 +35,6 @@ const witService = {
             return { error: 'Wit.ai processing failed.' };
         }
     }
-};
+}
 
-
-module.exports = witService
+module.exports = MovieBot
